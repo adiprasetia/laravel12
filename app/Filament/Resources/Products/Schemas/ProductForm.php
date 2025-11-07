@@ -16,7 +16,7 @@ class ProductForm
                 TextInput::make('price')
                     ->required()
                     ->numeric()
-                    ->prefix('$'),
+                    ->prefix('IDR'),
                 TextInput::make('stock')
                     ->required()
                     ->numeric(),
