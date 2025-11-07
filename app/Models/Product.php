@@ -12,4 +12,10 @@ class Product extends Model
         'price',
         'stock',
     ];
+
+    //relasi ke order details (one to many) satu product punya banyak order detail
+    public function orderDetails()
+    {
+        return $this->hasMany(OrderDetail::class);
+    }
 }

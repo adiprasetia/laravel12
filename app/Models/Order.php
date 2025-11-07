@@ -18,4 +18,10 @@ class Order extends Model
         'total_price',
         'order_date',
     ];
+
+    //relasi ke order details (one to many) satu order punya banyak order detail
+    public function orderDetails()
+    {
+        return $this->hasMany(OrderDetail::class);
+    }
 }
