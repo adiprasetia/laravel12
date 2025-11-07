@@ -27,6 +27,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->brandName('ADD Computer Store')
             ->login()
             ->colors([
                 'primary' => Color::Amber,
