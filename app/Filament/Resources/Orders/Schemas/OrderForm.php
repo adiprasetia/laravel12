@@ -6,7 +6,9 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Forms\Set;
 
 class OrderForm
 {
@@ -14,12 +16,30 @@ class OrderForm
     {
         return $schema
             ->components([
-                Select::make('customer_id')
-                    ->required()
-                    ->relationship('customer', 'name'),//relation to customers table and display name column
                 DateTimePicker::make('order_date')
-                ->default(now())
-                ->required(),
+                    ->default(now())
+                    ->required()
+                    ->hiddenLabel()
+                    ->prefix('Order Date & Time')
+                    ->disabled(),
+
+                Section::make('')
+                    ->description('Customer Information')
+                    ->columnSpanFull()
+                    ->schema([
+                        Select::make('customer_id')
+                            ->required()
+                            ->relationship('customer', 'name') //relation to customers table and display name column
+                            ->afterStateUpdated(function ($state, Set $set) {
+
+                            }),
+                        TextInput::make('phone')
+                            ->disabled(),
+                        TextInput::make('address')
+                            ->disabled(),
+                    ]),
+
+
                 TextInput::make('total_price')
                     ->required()
                     ->prefix('IDR')
