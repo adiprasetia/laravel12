@@ -24,4 +24,11 @@ class Order extends Model
     {
         return $this->hasMany(OrderDetail::class);
     }
+
+    // Backwards-compatible alias for snake_case relationship name used by some packages/components
+    // e.g. when a form component calls ->relationship() with the key 'order_details'.
+    public function order_details()
+    {
+        return $this->orderDetails();
+    }
 }
