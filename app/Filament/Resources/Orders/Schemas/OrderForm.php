@@ -23,7 +23,8 @@ class OrderForm
                     ->required()
                     ->hiddenLabel()
                     ->prefix('Order Date & Time')
-                    ->disabled(),
+                    ->disabled()
+                    ->dehydrated(),
 
                 Section::make('')
                     ->description('Customer Information')
@@ -58,6 +59,7 @@ class OrderForm
                                 Select::make('product_id')
                                     ->relationship('product', 'name') //relation to products table and display name column
                                     ->reactive()
+                                    ->live()
                                     ->afterStateUpdated(function (Get $get, Set $set, $state) {
 
                                         $product = \App\Models\Product::find($state); // ambil data produk berdasarkan product_id yang dipilih
@@ -68,12 +70,14 @@ class OrderForm
                                         $subtotal = $price * $qty;
                                         $set('subtotal', $subtotal); // hitung subtotal
 
-                                        $items = $get('orderDetails') ?? []; // ambil semua item orderDetails
-                                        $total = 0; // inisialisasi total
-                                        foreach ($items as $item) { // loop setiap item
+                                        // Ambil orderDetails dari root (absolute) bukan dari item repeater
+                                        $items = $get('orderDetails', true) ?? [];
+                                        $total = 0;
+                                        foreach ($items as $item) {
                                             $total += $item['subtotal'] ?? 0;
                                         }
-                                        $set('total_price', $total);   // set total price di form utama
+                                        // Set total_price di root (absolute) bukan di dalam repeater
+                                        $set('total_price', $total, true);
 
                                     }),
                                 TextInput::make('price')
@@ -82,17 +86,20 @@ class OrderForm
                                 TextInput::make('quantity')
                                     ->numeric()
                                     ->reactive()
+                                    ->live()
                                     ->afterStateUpdated(function (Get $get, Set $set, $state) {
                                         $price = $get('price') ?? 0; // ambil harga saat ini atau default 0 jika belum ada
                                         $qty = $state ?? 1; // ambil quantity saat ini atau default 1
                                         $set('subtotal', $price * $qty);
 
-                                        $items = $get('orderDetails') ?? []; // ambil semua item orderDetails
-                                        $total = 0; // inisialisasi total
-                                        foreach ($items as $item) { // loop setiap item
+                                        // Ambil orderDetails dari root (absolute) bukan dari item repeater
+                                        $items = $get('orderDetails', true) ?? [];
+                                        $total = 0;
+                                        foreach ($items as $item) {
                                             $total += $item['subtotal'] ?? 0;
                                         }
-                                        $set('total_price', $total);   // set total price di form utama
+                                        // Set total_price di root (absolute) bukan di dalam repeater
+                                        $set('total_price', $total, true);
                                     }),
                                 TextInput::make('subtotal')
                                     ->disabled()
@@ -105,8 +112,9 @@ class OrderForm
                     ->prefix('IDR')
                     ->numeric()
                     ->disabled()
-                    
-
+                    ->dehydrated()
+                    ->default(0)
+                    ->required(),
 
             ]);
     }
