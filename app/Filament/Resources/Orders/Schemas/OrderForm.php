@@ -35,6 +35,7 @@ class OrderForm
                             ->required()
                             ->relationship('customer', 'name') //relation to customers table and display name column
                             ->reactive()
+                            ->live()
                             ->label('Name')
                             ->afterStateUpdated(function (Set $set, $state) {
                                 $customer = \App\Models\Customer::find($state);
@@ -61,6 +62,7 @@ class OrderForm
                                     ->required()
                                     ->relationship('product', 'name')
                                     ->reactive()
+                                    ->disableOptionsWhenSelectedInSiblingRepeaterItems() // Disable item yang sudah dipilih di kolom product supaya tidak bisa dipilih lagi
                                     ->afterStateUpdated(function ($state, Set $set, Get $get) {
                                         $product = \App\Models\Product::find($state);
                                         $set('price', $product->price ?? 0); // set price berdasarkan product yang dipilih
