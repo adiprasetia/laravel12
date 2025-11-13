@@ -28,9 +28,15 @@ class OrdersTable
                     ->label('Order Date')
                     ->date()
                     ->sortable(),
+                TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->expandable()
-            ->expandedRowsQuery(fn ($query) => $query->with('orderDetails'))
             ->filters([
                 //
             ])
