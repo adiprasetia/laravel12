@@ -29,18 +29,19 @@ class OrderDetailRelationManager extends RelationManager
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('quantity')
-                    ->label('Quantity')
-                    ->sortable(),
+                    ->label('Quantity'),
                 TextColumn::make('price')
                     ->label('Price')
                     ->money('IDR')
                     ->sortable(),
+
                 TextColumn::make('subtotal')
                     ->label('Total')
-                    ->money('IDR'),
-            ])
-            ->headerActions([
-                CreateAction::make()
+                    ->money('IDR')
+                    ->sortable(),
             ]);
+            // ->headerActions([
+            //     CreateAction::make()
+            // ]);
     }
 }

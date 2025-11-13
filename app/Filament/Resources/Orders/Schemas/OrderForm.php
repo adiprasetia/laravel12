@@ -9,7 +9,9 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Forms\Components\Repeater;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Tables\Columns\TextInputColumn;
 
 class OrderForm
 {
@@ -34,7 +36,8 @@ class OrderForm
                             ->relationship('customer', 'name') //relation to customers table and display name column
                             ->reactive()
                             ->live()
-                            ->label('Name')
+                            ->hiddenLabel()
+                            ->prefix('Name')
                             ->afterStateUpdated(function (Set $set, $state) {
                                 $customer = \App\Models\Customer::find($state);
                                 $set('email', $customer->email ?? null);
@@ -42,12 +45,18 @@ class OrderForm
                                 $set('address', $customer->address ?? null);
                             }),
                         TextInput::make('email') //Kolom email
-                            ->disabled(),
+                            ->disabled()
+                            ->hiddenLabel()
+                            ->prefix('Email'),
                         TextInput::make('phone') //Kolom phone
-                            ->disabled(),
+                            ->disabled()
+                            ->hiddenLabel()
+                            ->prefix('Phone'),
                         TextInput::make('address') //Kolom address
-                            ->disabled(),
-                    ])->columns(3),
+                            ->disabled()
+                            ->hiddenLabel()
+                            ->prefix('Address'),
+                    ])->columns(2),
 
                 Section::make('')
                     ->description('Order Details')

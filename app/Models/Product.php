@@ -11,6 +11,7 @@ class Product extends Model
         'name',
         'price',
         'stock',
+        'image',
     ];
 
     //relasi ke order details (one to many) satu product punya banyak order detail
