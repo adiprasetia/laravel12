@@ -12,6 +12,7 @@ class OrderDetail extends Model
         'product_id',
         'quantity',
         'price',
+        'subtotal',
     ];
 
     //relasi ke order (many to one) banyak order detail punya satu order

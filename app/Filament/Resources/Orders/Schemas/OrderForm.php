@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Orders\Schemas;
 
+use Dom\Text;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
@@ -18,7 +19,7 @@ class OrderForm
     {
         return $schema
             ->components([
-                DateTimePicker::make('order_date')
+                DateTimePicker::make('order_date')// Kolom tanggal dan waktu order
                     ->default(now())
                     ->required()
                     ->hiddenLabel()
@@ -27,10 +28,10 @@ class OrderForm
                     ->dehydrated(),
 
                 Section::make('')
-                    ->description('Customer Information')
+                    ->description('Customer Information') //Tab Customer Information
                     ->columnSpanFull()
                     ->schema([
-                        Select::make('customer_id')
+                        Select::make('customer_id') //Kolom customer_id
                             ->required()
                             ->relationship('customer', 'name') //relation to customers table and display name column
                             ->reactive()
@@ -41,11 +42,11 @@ class OrderForm
                                 $set('phone', $customer->phone ?? null);
                                 $set('address', $customer->address ?? null);
                             }),
-                        TextInput::make('email')
+                        TextInput::make('email') //Kolom email
                             ->disabled(),
-                        TextInput::make('phone')
+                        TextInput::make('phone') //Kolom phone
                             ->disabled(),
-                        TextInput::make('address')
+                        TextInput::make('address') //Kolom address
                             ->disabled(),
                     ])->columns(3),
 
@@ -53,69 +54,77 @@ class OrderForm
                     ->description('Order Details')
                     ->columnSpanFull()
                     ->schema([
-                        Repeater::make('orderDetails') //ambil dari function orderDetails di model Order.php
-                            ->relationship() //relation to order_details table
+                        Repeater::make('orderDetails') //Tab order details
+                            ->relationship() //relasi ke order details
                             ->schema([
-                                Select::make('product_id')
-                                    ->relationship('product', 'name') //relation to products table and display name column
+                                Select::make('product_id') //Kolom product_id
+                                    ->required()
+                                    ->relationship('product', 'name')
                                     ->reactive()
-                                    ->live()
-                                    ->afterStateUpdated(function (Get $get, Set $set, $state) {
+                                    ->afterStateUpdated(function ($state, Set $set, Get $get) {
+                                        $product = \App\Models\Product::find($state);
+                                        $set('price', $product->price ?? 0); // set price berdasarkan product yang dipilih
 
-                                        $product = \App\Models\Product::find($state); // ambil data produk berdasarkan product_id yang dipilih
-                                        $price = $product->price ?? 0; // ambil harga produk atau default 0 jika belum ada
-                                        $set('price', $price ?? null); // set harga saat produk dipilih atau default null jika belum ada
-                                        $qty = $get('quantity') ?? 1; // ambil quantity saat ini atau default 1
-                                        $set('quantity', $qty); // set quantity jika belum ada
-                                        $subtotal = $price * $qty;
-                                        $set('subtotal', $subtotal); // hitung subtotal
+                                        // Update subtotal when product changes
+                                        $quantity = $get('quantity') ?? 1;
+                                        $set ('quantity', $quantity); // tampilkan nilai quantity, default 1
+                                        $set('subtotal', ($product->price ?? 0) * $quantity); //tampilkan subtotal = price * quantity
 
-                                        // Ambil orderDetails dari root (absolute) bukan dari item repeater
-                                        $items = $get('orderDetails', true) ?? [];
-                                        $total = 0;
-                                        foreach ($items as $item) {
-                                            $total += $item['subtotal'] ?? 0;
-                                        }
-                                        // Set total_price di root (absolute) bukan di dalam repeater
-                                        $set('total_price', $total, true);
+                                        // Update total price of the order
+                                        $items=$get('../../orderDetails') ?? []; // Masukkan jumlah order detail,tambah .. karena ada diluar repeater
+                                        $total=collect($items)->sum(function($item){
+                                            return ($item['price'] ?? 0) * ($item['quantity'] ?? 0); //ambil total price dan quantity, kemudian kalikan
+                                        });
 
+                                        $set('../../total_price', $total); // Tampilkan total_price, tambah .. karena ada diluar repeater
                                     }),
-                                TextInput::make('price')
+
+                                TextInput::make('price') //Kolom price
+                                    ->numeric()
                                     ->prefix('IDR')
-                                    ->numeric(),
-                                TextInput::make('quantity')
+                                    ->disabled()
+                                    ->dehydrated(),
+
+                                TextInput::make('quantity') //Kolom quantity
                                     ->numeric()
                                     ->reactive()
-                                    ->live()
-                                    ->afterStateUpdated(function (Get $get, Set $set, $state) {
-                                        $price = $get('price') ?? 0; // ambil harga saat ini atau default 0 jika belum ada
-                                        $qty = $state ?? 1; // ambil quantity saat ini atau default 1
-                                        $set('subtotal', $price * $qty);
+                                    ->afterStateUpdated(function ($state, Set $set, Get $get) {
+                                        // Update subtotal when price changes
+                                        $quantity = $get('quantity') ?? 1;
+                                        $price = $get('price') ?? 0;
+                                        $set('subtotal', $price * $quantity);
 
-                                        // Ambil orderDetails dari root (absolute) bukan dari item repeater
-                                        $items = $get('orderDetails', true) ?? [];
-                                        $total = 0;
-                                        foreach ($items as $item) {
-                                            $total += $item['subtotal'] ?? 0;
-                                        }
-                                        // Set total_price di root (absolute) bukan di dalam repeater
-                                        $set('total_price', $total, true);
+                                        // Update total price of the order
+                                        $items = $get('../../orderDetails') ?? []; // tambah .. karena ada diluar repeater
+                                        $total = collect($items)->sum(function ($item) {
+                                            return ($item['price'] ?? 0) * ($item['quantity'] ?? 0);
+                                        });
+                                        $set('../../total_price', $total); // tambah .. karena ada diluar repeater
                                     }),
-                                TextInput::make('subtotal')
-                                    ->disabled()
-                                    ->prefix('IDR')
-                                    ->numeric(),
-                            ])->columns(4),
-                    ]),
 
-                TextInput::make('total_price')
+                                TextInput::make('subtotal') //Kolom subtotal
+                                    ->numeric()
+                                    ->prefix('IDR')
+                                    ->disabled()
+                                    ->dehydrated(),
+
+
+                            ])
+                            ->columns(4),
+                        ]),
+
+
+                TextInput::make('total_price') //Tab kolom total_price
                     ->prefix('IDR')
                     ->numeric()
                     ->disabled()
-                    ->dehydrated()
-                    ->default(0)
-                    ->required(),
+                    ->dehydrated() //supaya disimpan ke database meskipun disabled
+                    ->live(),
 
             ]);
     }
+
+
 }
+
+
