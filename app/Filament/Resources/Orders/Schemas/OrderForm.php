@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\Orders\Schemas;
 
-use Dom\Text;
-use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;

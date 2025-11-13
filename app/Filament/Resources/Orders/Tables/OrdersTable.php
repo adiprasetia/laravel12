@@ -8,6 +8,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\Layout\Panel;
 use Filament\Tables\Table;
 
 class OrdersTable
@@ -17,22 +18,19 @@ class OrdersTable
         return $table
             ->columns([
                 TextColumn::make('customer.name')
+                    ->label('Customer')
                     ->sortable(),
                 TextColumn::make('total_price')
+                    ->label('Total Price')
                     ->money('IDR')
                     ->sortable(),
                 TextColumn::make('order_date')
+                    ->label('Order Date')
                     ->date()
                     ->sortable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->expandable()
+            ->expandedRowsQuery(fn ($query) => $query->with('orderDetails'))
             ->filters([
                 //
             ])
