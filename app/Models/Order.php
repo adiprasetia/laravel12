@@ -17,6 +17,9 @@ class Order extends Model
         'customer_id',
         'total_price',
         'order_date',
+        'discount',
+        'discount_ammount',
+        'total_payment',
     ];
 
     //relasi ke order details (one to many) satu order punya banyak order detail
