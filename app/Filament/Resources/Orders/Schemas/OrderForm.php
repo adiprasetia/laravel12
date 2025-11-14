@@ -2,14 +2,14 @@
 
 namespace App\Filament\Resources\Orders\Schemas;
 
+use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Select;
-use Filament\Schemas\Components\Flex;
+use Filament\Schemas\Components\Group;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 
@@ -25,10 +25,9 @@ class OrderForm
                     ->required()
                     ->hiddenLabel()
                     ->prefix('Order Date & Time')
-                    ->disabled()
-                    ->dehydrated()
+                    ->readOnly()
                     ->columnSpan(2),
-                    
+
 
                 Group::make([
                     Section::make('')
@@ -49,15 +48,15 @@ class OrderForm
                                     $set('address', $customer->address ?? null);
                                 }),
                             TextInput::make('email') //Kolom email
-                                ->disabled()
+                                ->readOnly()
                                 ->hiddenLabel()
                                 ->prefix('Email'),
                             TextInput::make('phone') //Kolom phone
-                                ->disabled()
+                                ->readOnly()
                                 ->hiddenLabel()
                                 ->prefix('Phone'),
                             TextInput::make('address') //Kolom address
-                                ->disabled()
+                                ->readOnly()
                                 ->hiddenLabel()
                                 ->prefix('Address'),
                         ])->columns(2),
@@ -102,8 +101,7 @@ class OrderForm
                                     TextInput::make('price') //Kolom price
                                         ->numeric()
                                         ->prefix('IDR')
-                                        ->disabled()
-                                        ->dehydrated(),
+                                        ->readOnly(),
 
                                     TextInput::make('quantity') //Kolom quantity
                                         ->numeric()
@@ -132,10 +130,16 @@ class OrderForm
                                     TextInput::make('subtotal') //Kolom subtotal
                                         ->numeric()
                                         ->prefix('IDR')
-                                        ->disabled()
-                                        ->dehydrated(),
+                                        ->readOnly(),
 
-                                ])->columns(4),
+                                ])
+                                ->columns(4)
+                                ->hiddenLabel()
+                                ->addAction(fn (Action $action)=> $action
+                                    ->label('Add Product')
+                                    ->color('primary')
+                                    ->icon('heroicon-o-plus'),
+                               ),
                         ]),
 
                 ])
@@ -160,15 +164,18 @@ class OrderForm
                         TextInput::make('total_price') //Tab kolom total_price
                             ->prefix('IDR')
                             ->numeric()
-                            ->disabled()
-                            ->dehydrated() //supaya disimpan ke database meskipun disabled
+                            ->readOnly()
                             ->live()
                             ->columnSpanFull(),
                         TextInput::make('discount') //Kolom discount
                             ->numeric()
-                            ->label('Disc. (%)')
+                            ->label('Discount')
+                            ->suffix('%')
+                            ->default(0)
+                            ->minValue(1)
+                            ->maxValue(100)
                             ->live()
-                            ->columnSpan('1')
+                            ->columnSpan('2')
                             //afterstateUpdated to calculate discount_ammount and total_payment
                             ->afterStateUpdated(function ($state, Set $set, Get $get) {
                                 $totalPrice = $get('total_price') ?? 0;
@@ -178,16 +185,15 @@ class OrderForm
                             }),
                         TextInput::make('discount_ammount') //Kolom discount_ammount
                             ->prefix('IDR')
+                            ->label('Disc. Amount')
                             ->numeric()
-                            ->disabled()
-                            ->dehydrated() //supaya disimpan ke database meskipun disabled
+                            ->readOnly()
                             ->live()
-                            ->columnSpan('3'),
+                            ->columnSpan('2'),
                         TextInput::make('total_payment') //Kolom total_payment
                             ->prefix('IDR')
                             ->numeric()
-                            ->disabled()
-                            ->dehydrated() //supaya disimpan ke database meskipun disabled
+                            ->readOnly()
                             ->live()
                             ->columnSpanFull(),
                     ])

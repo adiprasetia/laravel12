@@ -33,13 +33,18 @@ class OrderDetailRelationManager extends RelationManager
                     ->label('Price')
                     ->money('IDR')
                     ->sortable(),
-
                 TextColumn::make('subtotal')
                     ->label('Total')
+                    ->money('IDR')
+                    ->sortable(),
+                TextColumn::make('discount')
+                    ->label('Discount')
+                    ->sortable(),
+                TextColumn::make('total_payment')
+                    ->label('Total Payment')
                     ->money('IDR')
                     ->sortable(),
             ])
             ->recordActions([]);
     }
-
 }
