@@ -18,7 +18,8 @@ class OrdersTable
             ->columns([
                 TextColumn::make('customer.name')
                     ->label('Customer')
-                    ->sortable(),
+                    ->sortable()
+                    ->searchable(),
                 TextColumn::make('total_price')
                     ->label('Total Price')
                     ->money('IDR')

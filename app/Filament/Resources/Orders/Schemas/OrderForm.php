@@ -2,64 +2,84 @@
 
 namespace App\Filament\Resources\Orders\Schemas;
 
-use Filament\Forms\Components\DateTimePicker;
+use Filament\Schemas\Schema;
 use Filament\Forms\Components\Select;
+use Filament\Schemas\Components\Flex;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Utilities\Set;
-use Filament\Forms\Components\Repeater;
-use Filament\Schemas\Components\Utilities\Get;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 
 class OrderForm
 {
     public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->components([
+
+            ->schema([
                 DateTimePicker::make('order_date') // Kolom tanggal dan waktu order
                     ->default(now())
                     ->required()
                     ->hiddenLabel()
                     ->prefix('Order Date & Time')
                     ->disabled()
-                    ->dehydrated(),
+                    ->dehydrated()
+                    ->columnSpan(2),
 
-                Section::make('')
-                    ->description('Customer Information') //Tab Customer Information
-                    ->columnSpanFull()
-                    ->schema([
-                        Select::make('customer_id') //Kolom customer_id
-                            ->required()
-                            ->relationship('customer', 'name') //relation to customers table and display name column
-                            ->reactive()
-                            ->live()
-                            ->hiddenLabel()
-                            ->prefix('Name')
-                            ->afterStateUpdated(function (Set $set, $state) {
-                                $customer = \App\Models\Customer::find($state);
-                                $set('email', $customer->email ?? null);
-                                $set('phone', $customer->phone ?? null);
-                                $set('address', $customer->address ?? null);
-                            }),
-                        TextInput::make('email') //Kolom email
-                            ->disabled()
-                            ->hiddenLabel()
-                            ->prefix('Email'),
-                        TextInput::make('phone') //Kolom phone
-                            ->disabled()
-                            ->hiddenLabel()
-                            ->prefix('Phone'),
-                        TextInput::make('address') //Kolom address
-                            ->disabled()
-                            ->hiddenLabel()
-                            ->prefix('Address'),
-                    ])->columns(2),
+                Group::make([
+                    Section::make('')
+                        ->description('Customer Information') //Tab Customer Information
+                        //->columnSpanFull()
+                        ->schema([
+                            Select::make('customer_id') //Kolom customer_id
+                                ->required()
+                                ->relationship('customer', 'name') //relation to customers table and display name column
+                                ->reactive()
+                                ->live()
+                                ->hiddenLabel()
+                                ->prefix('Name')
+                                ->afterStateUpdated(function (Set $set, $state) {
+                                    $customer = \App\Models\Customer::find($state);
+                                    $set('email', $customer->email ?? null);
+                                    $set('phone', $customer->phone ?? null);
+                                    $set('address', $customer->address ?? null);
+                                }),
+                            TextInput::make('email') //Kolom email
+                                ->disabled()
+                                ->hiddenLabel()
+                                ->prefix('Email'),
+                            TextInput::make('phone') //Kolom phone
+                                ->disabled()
+                                ->hiddenLabel()
+                                ->prefix('Phone'),
+                            TextInput::make('address') //Kolom address
+                                ->disabled()
+                                ->hiddenLabel()
+                                ->prefix('Address'),
+                        ])->columns(2),
+
+                    Section::make('')
+                        ->description('Payment Information') //Tab Timestamps
+
+                        ->schema([
+                            TextInput::make('total_price') //Tab kolom total_price
+                                ->prefix('IDR')
+                                ->numeric()
+                                ->disabled()
+                                ->dehydrated() //supaya disimpan ke database meskipun disabled
+                                ->live(),
+
+                        ])->columnSpan(1),
+
+                ])->columns(2),
 
                 Section::make('')
                     ->description('Order Details')
-                    ->columnSpanFull()
+                    //->columnSpanFull()
                     ->schema([
                         Repeater::make('orderDetails') //Tab order details
                             ->relationship() //relasi ke order details
@@ -116,17 +136,8 @@ class OrderForm
                                     ->disabled()
                                     ->dehydrated(),
 
-                            ])
-                            ->columns(4),
-                    ]),
-
-                TextInput::make('total_price') //Tab kolom total_price
-                    ->prefix('IDR')
-                    ->numeric()
-                    ->disabled()
-                    ->dehydrated() //supaya disimpan ke database meskipun disabled
-                    ->live(),
-
-            ]);
+                            ])->columns(4),
+                    ])->columnSpan(2),
+            ])->columns(1);
     }
 }

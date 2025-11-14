@@ -14,6 +14,8 @@ class OrderDetailRelationManager extends RelationManager
 
     protected static ?string $relatedResource = OrderResource::class;
 
+    protected static ?string $title = 'Order Details';
+
     public function table(Table $table): Table
     {
         return $table
@@ -36,10 +38,8 @@ class OrderDetailRelationManager extends RelationManager
                     ->label('Total')
                     ->money('IDR')
                     ->sortable(),
-            ]);
-
-            // ->headerActions([
-            //     CreateAction::make()
-            // ]);
+            ])
+            ->recordActions([]);
     }
+
 }
