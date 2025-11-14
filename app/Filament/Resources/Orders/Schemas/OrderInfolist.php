@@ -2,17 +2,23 @@
 
 namespace App\Filament\Resources\Orders\Schemas;
 
-use Filament\Infolists\Components\TextEntry;
+use Dom\Text;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Schemas\Components\Section;
+use Filament\Infolists\Components\TextEntry;
 
 class OrderInfolist
 {
     public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->components([
-                TextEntry::make('customer_id')
-                    ->numeric(),
+        ->components([
+            Section::make('Order Information')
+            ->icon(Heroicon::ShoppingBag)
+            ->schema([
+                TextEntry::make('customer.name'),
                 TextEntry::make('total_price')
                     ->money('IDR')
                     ->numeric(),
@@ -23,6 +29,8 @@ class OrderInfolist
                     ->hidden(),
                 TextEntry::make('updated_at')
                     ->dateTime(),
+                ])
+            ->columns(2),
             ]);
     }
 }

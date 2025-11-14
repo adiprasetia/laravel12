@@ -9,9 +9,8 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Forms\Components\Repeater;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Utilities\Get;
-use Filament\Tables\Columns\TextInputColumn;
+use Filament\Infolists\Components\TextEntry;
 
 class OrderForm
 {
@@ -19,7 +18,7 @@ class OrderForm
     {
         return $schema
             ->components([
-                DateTimePicker::make('order_date')// Kolom tanggal dan waktu order
+                DateTimePicker::make('order_date') // Kolom tanggal dan waktu order
                     ->default(now())
                     ->required()
                     ->hiddenLabel()
@@ -76,12 +75,12 @@ class OrderForm
 
                                         // Update subtotal when product changes
                                         $quantity = $get('quantity') ?? 1;
-                                        $set ('quantity', $quantity); // tampilkan nilai quantity, default 1
+                                        $set('quantity', $quantity); // tampilkan nilai quantity, default 1
                                         $set('subtotal', ($product->price ?? 0) * $quantity); //tampilkan subtotal = price * quantity
 
                                         // Update total price of the order
-                                        $items=$get('../../orderDetails') ?? []; // Masukkan jumlah order detail,tambah .. karena ada diluar repeater
-                                        $total=collect($items)->sum(function($item){
+                                        $items = $get('../../orderDetails') ?? []; // Masukkan jumlah order detail,tambah .. karena ada diluar repeater
+                                        $total = collect($items)->sum(function ($item) {
                                             return ($item['price'] ?? 0) * ($item['quantity'] ?? 0); //ambil total price dan quantity, kemudian kalikan
                                         });
 
@@ -117,11 +116,9 @@ class OrderForm
                                     ->disabled()
                                     ->dehydrated(),
 
-
                             ])
                             ->columns(4),
-                        ]),
-
+                    ]),
 
                 TextInput::make('total_price') //Tab kolom total_price
                     ->prefix('IDR')
@@ -132,8 +129,4 @@ class OrderForm
 
             ]);
     }
-
-
 }
-
-

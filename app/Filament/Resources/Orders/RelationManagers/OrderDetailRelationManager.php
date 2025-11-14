@@ -6,12 +6,7 @@ use App\Filament\Resources\Orders\OrderResource;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Actions\CreateAction;
-
-
-
-
-
+use Filament\Tables\Columns\ImageColumn;
 
 class OrderDetailRelationManager extends RelationManager
 {
@@ -22,8 +17,10 @@ class OrderDetailRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('id')
+            ->recordTitleAttribute('id') // Optional
             ->columns([
+                ImageColumn::make('product.image')
+                    ->label('Product Image'),
                 TextColumn::make('product.name')
                     ->label('Product')
                     ->searchable()
@@ -40,6 +37,7 @@ class OrderDetailRelationManager extends RelationManager
                     ->money('IDR')
                     ->sortable(),
             ]);
+
             // ->headerActions([
             //     CreateAction::make()
             // ]);
