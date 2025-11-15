@@ -8,6 +8,8 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ExportAction;
+use Filament\Actions\Exports\Models\Export;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -41,6 +43,22 @@ class OrdersTable
                     ->numeric()
                     ->prefix('IDR ')
                     ->label('Total Payment'),
+
+                TextColumn::make('payment_method')
+                    ->label('Payment Method')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('payment_status')
+                    ->label('Payment Status')
+                    ->sortable()
+                    ->searchable()
+                    ->badge()
+                    ->color(fn(string $state): string => match ($state) {
+                        'paid' => 'success',
+                        'unpaid' => 'warning',
+                        'failed' => 'danger',
+                    }),
                 TextColumn::make('status')
                     ->label('Status')
                     ->sortable()
@@ -81,6 +99,10 @@ class OrdersTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
+            ])
+            ->headerActions([
+                ExportAction::make()
+                    ->exporter(\App\Filament\Exports\OrderExporter::class),
             ]);
     }
 }

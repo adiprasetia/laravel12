@@ -21,6 +21,8 @@ class Order extends Model
         'discount_ammount',
         'total_payment',
         'status',
+        'payment_method',
+        'payment_status',
     ];
 
     //relasi ke order details (one to many) satu order punya banyak order detail

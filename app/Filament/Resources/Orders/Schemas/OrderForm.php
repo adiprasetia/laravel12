@@ -124,7 +124,6 @@ class OrderForm
                                             $discountAmmount = ($total * $discount) / 100;
                                             $set('../../discount_ammount', $discountAmmount);
                                             $set('../../total_payment', $total - $discountAmmount);
-
                                         }),
 
                                     TextInput::make('subtotal') //Kolom subtotal
@@ -135,15 +134,16 @@ class OrderForm
                                 ])
                                 ->columns(4)
                                 ->hiddenLabel()
-                                ->addAction(fn (Action $action)=> $action // membuat tombol add product custom
-                                    ->label('Add Product')
-                                    ->color('primary')
-                                    ->icon('heroicon-o-plus'),
-                               ),
+                                ->addAction(
+                                    fn(Action $action) => $action // membuat tombol add product custom
+                                        ->label('Add Product')
+                                        ->color('primary')
+                                        ->icon('heroicon-o-plus'),
+                                ),
                         ]),
 
                 ])
-                ->columnSpan(2),
+                    ->columnSpan(2),
 
 
 
@@ -196,6 +196,28 @@ class OrderForm
                             ->readOnly()
                             ->live()
                             ->columnSpanFull(),
+
+                        Select::make('payment_method') //Kolom payment_method
+                            ->label('Payment Method')
+                            ->required()
+                            ->options([
+                                'cash' => 'Cash',
+                                'credit' => 'Credit',
+                                'debit' => 'Debit',
+                                'qris' => 'QRIS',
+                            ])
+                            ->default('cash')
+                            ->columnSpan(2),
+                        Select::make('payment_status') //Kolom payment_status
+                            ->label('Payment Status')
+                            ->required()
+                            ->options([
+                                'paid' => 'Paid',
+                                'unpaid' => 'Unpaid',
+                                'failed' => 'Failed',
+                            ])
+                            ->default('unpaid')
+                            ->columnSpan(2),
                     ])
                     ->columnSpan(1)
                     ->columns(4),
