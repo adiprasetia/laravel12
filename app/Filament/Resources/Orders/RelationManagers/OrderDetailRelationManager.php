@@ -39,11 +39,13 @@ class OrderDetailRelationManager extends RelationManager
                     ->sortable(),
                 TextColumn::make('discount')
                     ->label('Discount')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('total_payment')
                     ->label('Total Payment')
                     ->money('IDR')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->recordActions([]);
     }
