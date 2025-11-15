@@ -99,10 +99,12 @@ class OrdersTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ])
-            ->headerActions([
                 ExportAction::make()
-                    ->exporter(\App\Filament\Exports\OrderExporter::class),
+                    ->exporter(\App\Filament\Exports\OrderExporter::class)
+                    ->label('Download Excel')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('success'),
             ]);
+
     }
 }
