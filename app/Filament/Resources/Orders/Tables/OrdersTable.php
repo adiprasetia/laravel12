@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Orders\Tables;
 
+use Dom\Text;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -20,10 +21,33 @@ class OrdersTable
                     ->label('Customer')
                     ->sortable()
                     ->searchable(),
+                TextColumn::make('customer.address')
+                    ->label('Alamat')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('total_price')
                     ->label('Total Price')
-                    ->money('IDR')
+                    ->prefix('IDR ')
                     ->sortable(),
+                TextColumn::make('discount')
+                    ->suffix(' %')
+                    ->label('Discount'),
+                TextColumn::make('total_payment')
+                    ->numeric()
+                    ->prefix('IDR ')
+                    ->label('Total Payment'),
+                TextColumn::make('status')
+                    ->label('Status')
+                    ->sortable()
+                    ->searchable()
+                    ->badge()
+                    ->color(fn(string $state): string => match ($state) {
+                        'new' => 'info',
+                        'processing' => 'warning',
+                        'completed' => 'success',
+                        'cancelled' => 'danger',
+                    }),
                 TextColumn::make('order_date')
                     ->label('Order Date')
                     ->date()
@@ -41,7 +65,7 @@ class OrdersTable
                 //
             ])
             ->recordActions([
-                ViewAction::make(),
+                //ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
             ])

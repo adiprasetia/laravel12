@@ -135,7 +135,7 @@ class OrderForm
                                 ])
                                 ->columns(4)
                                 ->hiddenLabel()
-                                ->addAction(fn (Action $action)=> $action
+                                ->addAction(fn (Action $action)=> $action // membuat tombol add product custom
                                     ->label('Add Product')
                                     ->color('primary')
                                     ->icon('heroicon-o-plus'),
@@ -172,7 +172,7 @@ class OrderForm
                             ->label('Discount')
                             ->suffix('%')
                             ->default(0)
-                            ->minValue(1)
+                            ->minValue(0)
                             ->maxValue(100)
                             ->live()
                             ->columnSpan('2')
