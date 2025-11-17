@@ -34,6 +34,7 @@ class OrdersTable
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('total_price')
                     ->label('Total Price')
+                    ->numeric()
                     ->prefix('IDR ')
                     ->sortable(),
                 TextColumn::make('discount')
